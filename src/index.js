@@ -12,6 +12,9 @@ const {
 const loginFrom = "https://undercards.net/SignIn";
 const questsFrom = "https://undercards.net/Quests";
 const skinsFrom = "https://undercards.net/CardSkinsConfig?action=shop";
+const languageFileFromStart = "https://undercards.net/translation/";
+
+const availableLanguages = ["en", "fr", "es", "pt", "cn", "it", "pl", "de", "ru"];
 
 /*
 function loadChanges(secret = '[]', skipCommit = '') {
@@ -77,14 +80,37 @@ function collect(username, password, firstOne) {
 					fs.writeFile("allSkins.json", JSON.stringify(skinsArray), function (err) {
 						if (err) throw err;
 						console.log("Skins File Saved!");
-						resolve();
+						saveLanguageFiles(logData).then(() => {
+							resolve();
+						})
 					});
+
 				})
 			})
 		});
 	});
 }
 
+function saveLanguageFiles(logData) {
+	return new Promise((resolve, reject) => {
+
+		function get(index) {
+			var language = availableLanguages[index];
+			needle('get', languageFileFromStart + language + ".json", logData).then(function(langData) {
+				fs.writeFile("languages/" + language + ".json", langData.body, function (err) {
+					if (err) throw err;
+					console.log(language + " file saved!");
+					if (index >= availableLanguages/length - 1) {
+						resolve();
+					} else {
+						get(index+1);
+					}
+				});
+			})
+		}
+		get(0);
+	})
+}
 
 
 loadChanges(...process.argv.slice(2)).catch((e) => {
