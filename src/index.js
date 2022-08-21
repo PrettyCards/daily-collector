@@ -100,7 +100,7 @@ function saveLanguageFiles(logData) {
 				fs.writeFile("languages/" + language + ".json", langData.body, function (err) {
 					if (err) throw err;
 					console.log(language + " file saved!");
-					if (index >= availableLanguages/length - 1) {
+					if (index >= availableLanguages.length - 1) {
 						resolve();
 					} else {
 						get(index+1);
