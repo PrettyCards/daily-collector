@@ -97,7 +97,7 @@ function saveLanguageFiles(logData) {
 		function get(index) {
 			var language = availableLanguages[index];
 			needle('get', languageFileFromStart + language + ".json", logData).then(function(langData) {
-				fs.writeFile("languages/" + language + ".json", langData.body, function (err) {
+				fs.writeFile("languages/" + language + ".json", JSON.stringify(langData.body), function (err) {
 					if (err) throw err;
 					console.log(language + " file saved!");
 					if (index >= availableLanguages.length - 1) {
