@@ -13,6 +13,7 @@ const loginFrom = "https://undercards.net/SignIn";
 const questsFrom = "https://undercards.net/Quests";
 const skinsFrom = "https://undercards.net/CardSkinsConfig?action=shop";
 const languageFileFromStart = "https://undercards.net/translation/";
+const artifactsFrom = "https://undercards.net/DecksConfig"
 
 const availableLanguages = ["en", "fr", "es", "pt", "cn", "it", "pl", "de", "ru"];
 
@@ -81,7 +82,9 @@ function collect(username, password, firstOne) {
 						if (err) throw err;
 						console.log("Skins File Saved!");
 						saveLanguageFiles(logData).then(() => {
-							resolve();
+							saveAllArtifacts(logData).then(() => {
+								resolve();
+							});
 						})
 					});
 
@@ -109,6 +112,18 @@ function saveLanguageFiles(logData) {
 			})
 		}
 		get(0);
+	})
+}
+
+function saveAllArtifacts(logData) {
+	return new Promise((resolve, reject) => {
+		needle('get', artifactsFrom, logData).then(function(artData) {
+			fs.writeFile("allArtifacts.json", artData.body.allArtifacts, function (err) { // Onu for some reason pre-strings JSON when sending it. For this ONE usecase, it's actually good for me.
+				if (err) throw err;
+				console.log("allArtifacts saved!");
+				resolve();
+			});
+		})
 	})
 }
 
