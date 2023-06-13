@@ -117,16 +117,85 @@ function saveLanguageFiles(logData) {
 
 function saveAllArtifacts(logData) {
 	return new Promise((resolve, reject) => {
+		var onuVersion = false;
+		var myVersion = false;
+
+		function resolveIfDone() {
+			if (onuVersion && myVersion) {
+				resolve();
+			}
+		}
+
 		needle('get', artifactsFrom, logData).then(function(artData) {
 			fs.writeFile("allArtifacts.json", artData.body.allArtifacts, function (err) { // Onu for some reason pre-strings JSON when sending it. For this ONE usecase, it's actually good for me.
 				if (err) throw err;
 				console.log("allArtifacts saved!");
-				resolve();
+				onuVersion = true;
+				resolveIfDone();
+			});
+			var processedArtifacts = JSON.parse(artData.body.allArtifacts);
+			processedArtifacts.forEach((art) => {
+				SetAdditionalDataForArtifact(art);
+			});
+			fs.writeFile("allArtifactsProcessed.json", JSON.stringify(processedArtifacts), function (err) { // Onu for some reason pre-strings JSON when sending it. For this ONE usecase, it's actually good for me.
+				if (err) throw err;
+				console.log("allArtifactsProcessed saved!");
+				myVersion = true;
+				resolveIfDone();
 			});
 		})
 	})
 }
 
+function SetAdditionalDataForArtifact(artifact) {
+	artifact.isImageBig = false;
+	if (artifact.unavailable) {
+		artifact.rarity = "TOKEN";
+	} else {
+		artifact.rarity = artifact.legendary ? "LEGENDARY" : "COMMON";
+	}
+
+	if (artifact.rarity == "LEGENDARY") {
+		artifact.backgroundClass = "PrettyCards_ArtBG_Legendary";
+	}
+
+	// Merges current artifact data with additional data.
+	for (var i=0; i < hardcodedArtifactData.length; i++) {
+		var data = hardcodedArtifactData[i];
+		if (data.id === artifact.id) {
+			for (var key in data) {
+				artifact[key] = data[key];
+			}
+			break;
+		}
+	}
+	for (var key in keysToDeleteFromArtifacts) {
+		delete artifact[key];
+	}
+}
+
+const hardcodedArtifactData = [
+	{id:  1, rarity: "BASE"},
+	{id:  2, rarity: "BASE"},
+	{id:  3, rarity: "BASE"},
+	{id:  4, rarity: "BASE"},
+	{id:  6, rarity: "BASE"},
+	{id: 45, isImageBig: true},
+	{id: 25, rarity: "DETERMINATION", ownerId: 28 , backgroundClass: "PrettyCards_ArtBG_Genocide"},  		// Genocide
+	{id: 34, rarity: "DETERMINATION", ownerId: 505, backgroundClass: "PrettyCards_ArtBG_DarkFountain"}, 	// Outbreak/Dark Fountain
+	{id: 43, rarity: "DETERMINATION", ownerId: 688, backgroundClass: "PrettyCards_ArtBG_UltimateFusion"}, 	// Ultimate Fusion
+	{id: 46, rarity: "DETERMINATION", ownerId: 717, backgroundClass: "PrettyCards_ArtBG_FreeKromer"}, 		// FREE KROMER
+	// Frisk Artifacts
+	{id: 60, rarity: "DETERMINATION", ownerId: 65, backgroundClass: "PrettyCards_ArtBG_WornDagger", soul: "DETERMINATION"}, 		// Worn Dagger
+	{id: 56, rarity: "DETERMINATION", ownerId: 65, backgroundClass: "PrettyCards_ArtBG_ToughGlove", soul: "BRAVERY"}, 				// Tough Glove
+	{id: 59, rarity: "DETERMINATION", ownerId: 65, backgroundClass: "PrettyCards_ArtBG_EmptyGun", soul: "JUSTICE"},  				// Empty Gun
+	{id: 58, rarity: "DETERMINATION", ownerId: 65, backgroundClass: "PrettyCards_ArtBG_BurntPan", soul: "KINDNESS"}, 				// Burnt Pan
+	{id: 55, rarity: "DETERMINATION", ownerId: 65, backgroundClass: "PrettyCards_ArtBG_ToyKnife", soul: "PATIENCE"}, 				// Toy Knife
+	{id: 57, rarity: "DETERMINATION", ownerId: 65, backgroundClass: "PrettyCards_ArtBG_BalletShoes", soul: "INTEGRITY"}, 			// Ballet Shoes
+	{id: 24, rarity: "DETERMINATION", ownerId: 65, backgroundClass: "PrettyCards_ArtBG_TornNotebook", soul: "PERSEVERANCE"}, 		// Torn Notebook
+];
+
+const keysToDeleteFromArtifacts = ["legendary", "unavailable", "custom", "disabled"];
 
 loadChanges(...process.argv.slice(2)).catch((e) => {
 	console.error(e);
