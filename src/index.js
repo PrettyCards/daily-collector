@@ -169,8 +169,8 @@ function SetAdditionalDataForArtifact(artifact) {
 			break;
 		}
 	}
-	for (var key in keysToDeleteFromArtifacts) {
-		delete artifact[key];
+	for (var i=0; i < keysToDeleteFromArtifacts.length; i++) {
+		delete artifact[keysToDeleteFromArtifacts[i]];
 	}
 }
 
