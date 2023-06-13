@@ -148,7 +148,7 @@ function saveAllArtifacts(logData) {
 }
 
 function SetAdditionalDataForArtifact(artifact) {
-	artifact.isImageBig = false;
+	//artifact.isImageBig = false; // Unneeded
 	if (artifact.unavailable) {
 		artifact.rarity = "TOKEN";
 	} else {
@@ -169,9 +169,16 @@ function SetAdditionalDataForArtifact(artifact) {
 			break;
 		}
 	}
+	delete artifact.legendary;
+	delete artifact.unavailable;
+	delete artifact.custom;
+	delete artifact.disabled;
+	delete artifact.cost;
+	/*
 	for (var i=0; i < keysToDeleteFromArtifacts.length; i++) {
 		delete artifact[keysToDeleteFromArtifacts[i]];
 	}
+	*/
 }
 
 const hardcodedArtifactData = [
@@ -195,7 +202,7 @@ const hardcodedArtifactData = [
 	{id: 24, rarity: "DETERMINATION", ownerId: 65, backgroundClass: "PrettyCards_ArtBG_TornNotebook", soul: "PERSEVERANCE"}, 		// Torn Notebook
 ];
 
-const keysToDeleteFromArtifacts = ["legendary", "unavailable", "custom", "disabled"];
+//const keysToDeleteFromArtifacts = ["legendary", "unavailable", "custom", "disabled", "cost"];
 
 loadChanges(...process.argv.slice(2)).catch((e) => {
 	console.error(e);
