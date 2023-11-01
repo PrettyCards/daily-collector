@@ -193,6 +193,7 @@ const hardcodedArtifactData = [
 	{id: 34, rarity: "DETERMINATION", ownerId: 505, backgroundClass: "PrettyCards_ArtBG_DarkFountain"}, 	// Outbreak/Dark Fountain
 	{id: 43, rarity: "DETERMINATION", ownerId: 688, backgroundClass: "PrettyCards_ArtBG_UltimateFusion"}, 	// Ultimate Fusion
 	{id: 46, rarity: "DETERMINATION", ownerId: 717, backgroundClass: "PrettyCards_ArtBG_FreeKromer"}, 		// FREE KROMER
+	{id: 63, rarity: "DETERMINATION", ownerId: 794, backgroundClass: "PrettyCards_ArtBG_UltimateFusion"},	// GIGA Batteries
 	// Frisk Artifacts
 	{id: 60, rarity: "DETERMINATION", ownerId: 65, backgroundClass: "PrettyCards_ArtBG_WornDagger", soul: "DETERMINATION"}, 		// Worn Dagger
 	{id: 56, rarity: "DETERMINATION", ownerId: 65, backgroundClass: "PrettyCards_ArtBG_ToughGlove", soul: "BRAVERY"}, 				// Tough Glove
