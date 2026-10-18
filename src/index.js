@@ -1,6 +1,7 @@
 const fs = require('fs');
 const needle = require('needle');
 const queue = require('better-queue');
+const agent = require('./proxy.js');
 	
 const {
 	access,
@@ -58,7 +59,8 @@ var saveDatas = [];
 
 function collect(username, password, firstOne) {
 	return new Promise((resolve, reject) => {
-		needle('post', loginFrom, {login: username, password: password, stayConnected: "on"}).then(function (logData) {
+		needle('post', loginFrom, {login: username, password: password, stayConnected: "on"}, { agent }).then(function (logData) {
+			logData.agent = agent;
 			needle('get', questsFrom, logData).then(function (data) {
 				console.log("Quest page loaded for user " + username + "!");
 				var count = (data.body.match(/dailyClaimed/g) || []).length;
